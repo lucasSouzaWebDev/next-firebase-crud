@@ -1,48 +1,21 @@
-import { useEffect, useState } from "react";
-import CustomerCollection from "../backend/db/CustomerCollection";
 import Button from "../components/Button";
 import Form from "../components/Form";
 import Layout from "../components/Layout";
 import Table from "../components/Table";
-import Customer from "../core/Customer";
-import CustomerRepository from "../core/CustomerRepository";
+import useCustomers from "../hooks/useCustomers";
 
 export default function Home() {
 
-  const repository: CustomerRepository = new CustomerCollection()
-
-  const [customer, setCustomer] = useState<Customer>(Customer.empty())
-  const [customers, setCustomers] = useState<Customer[]>([])
-  const [visible, setVisible] = useState<'table' | 'form'>('table')
-
-  useEffect(getAll, [])
-  
-  function getAll() {
-    repository.getAll().then(customers => {
-      setCustomers(customers)
-      setVisible('table')
-    })
-  }
-
-  function selectedCustomer(customer: Customer) {
-    setCustomer(customer)
-    setVisible('form')
-  }
-
-  async function deletedCustomer(customer: Customer) {
-    await repository.delete(customer)
-    getAll()
-  }
-
-  function newCustomer() {
-    setCustomer(Customer.empty())
-    setVisible('form')
-  }
-
-  async function saveCustomer(customer: Customer) {
-    await repository.save(customer)
-    getAll()
-  }
+  const {
+    customer,
+    customers,
+    newCustomer,
+    selectCustomer,
+    saveCustomer,
+    deleteCustomer,
+    tableVisible,
+    showTable
+  } = useCustomers()
 
   return (
     <div className={`
@@ -51,16 +24,16 @@ export default function Home() {
       text-white
     `}>
       <Layout title="Cadastro Simples">
-        {visible == 'table' ? (
+        {tableVisible ? (
           <>
             <div className="flex justify-end">
               <Button color="green" className="mb-4" onClick={() => newCustomer()}>Novo Cliente</Button>
             </div>
-            <Table customers={customers} selectedCustomer={selectedCustomer} deletedCustomer={deletedCustomer}></Table>
+            <Table customers={customers} selectedCustomer={selectCustomer} deletedCustomer={deleteCustomer}></Table>
 
           </>
         ) : (
-          <Form customer={customer} changeCustomer={saveCustomer} cancel={() => setVisible('table')} />
+          <Form customer={customer} changeCustomer={saveCustomer} cancel={() => showTable} />
         )}
       </Layout>
     </div>
