@@ -1,4 +1,5 @@
 import Button from "../components/Button";
+import Form from "../components/Form";
 import Layout from "../components/Layout";
 import Table from "../components/Table";
 import Customer from "../core/Customer";
@@ -33,6 +34,7 @@ export default function Home() {
           <Button color="green" className="mb-4">Novo Cliente</Button>
         </div>
         <Table customers={customers} selectedCustomer={selectedCustomer} deletedCustomer={deletedCustomer}></Table>
+        <Form customer={customers[0]}/>
       </Layout>
     </div>
   )
