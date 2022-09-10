@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Button from "../components/Button";
 import Form from "../components/Form";
 import Layout from "../components/Layout";
@@ -23,6 +24,12 @@ export default function Home() {
 
   }
 
+  function saveCustomer(customer: Customer) {
+    console.log(customer);
+  }
+
+  const [visible, setVisible] = useState<'table' | 'form'>('table')
+
   return (
     <div className={`
       flex justify-center items-center h-screen
@@ -30,11 +37,17 @@ export default function Home() {
       text-white
     `}>
       <Layout title="Cadastro Simples">
-        <div className="flex justify-end">
-          <Button color="green" className="mb-4">Novo Cliente</Button>
-        </div>
-        <Table customers={customers} selectedCustomer={selectedCustomer} deletedCustomer={deletedCustomer}></Table>
-        <Form customer={customers[0]}/>
+        {visible == 'table' ? (
+          <>
+            <div className="flex justify-end">
+              <Button color="green" className="mb-4" onClick={() => setVisible('form')}>Novo Cliente</Button>
+            </div>
+            <Table customers={customers} selectedCustomer={selectedCustomer} deletedCustomer={deletedCustomer}></Table>
+
+          </>
+        ) : (
+          <Form customer={customers[0]} changeCustomer={saveCustomer} cancel={() => setVisible('table')} />
+        )}
       </Layout>
     </div>
   )
