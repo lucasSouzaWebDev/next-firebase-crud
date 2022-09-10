@@ -1,29 +1,37 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import CustomerCollection from "../backend/db/CustomerCollection";
 import Button from "../components/Button";
 import Form from "../components/Form";
 import Layout from "../components/Layout";
 import Table from "../components/Table";
 import Customer from "../core/Customer";
+import CustomerRepository from "../core/CustomerRepository";
 
 export default function Home() {
 
+  const repository: CustomerRepository = new CustomerCollection()
+
   const [customer, setCustomer] = useState<Customer>(Customer.empty())
+  const [customers, setCustomers] = useState<Customer[]>([])
   const [visible, setVisible] = useState<'table' | 'form'>('table')
-  const customers = [
-    new Customer('Lucas', 25, '1'),
-    new Customer('Erika', 20, '2'),
-    new Customer('Carlos', 22, '3'),
-    new Customer('Teste', 28, '4'),
-  ]
+
+  useEffect(getAll, [])
+  
+  function getAll() {
+    repository.getAll().then(customers => {
+      setCustomers(customers)
+      setVisible('table')
+    })
+  }
 
   function selectedCustomer(customer: Customer) {
     setCustomer(customer)
     setVisible('form')
   }
 
-  function deletedCustomer(customer: Customer) {
-    console.log(customer.name)
-
+  async function deletedCustomer(customer: Customer) {
+    await repository.delete(customer)
+    getAll()
   }
 
   function newCustomer() {
@@ -31,9 +39,9 @@ export default function Home() {
     setVisible('form')
   }
 
-  function saveCustomer(customer: Customer) {
-    console.log(customer)
-    setVisible('table')
+  async function saveCustomer(customer: Customer) {
+    await repository.save(customer)
+    getAll()
   }
 
   return (
