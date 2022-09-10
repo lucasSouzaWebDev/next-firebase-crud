@@ -7,6 +7,8 @@ import Customer from "../core/Customer";
 
 export default function Home() {
 
+  const [customer, setCustomer] = useState<Customer>(Customer.empty())
+  const [visible, setVisible] = useState<'table' | 'form'>('table')
   const customers = [
     new Customer('Lucas', 25, '1'),
     new Customer('Erika', 20, '2'),
@@ -15,20 +17,24 @@ export default function Home() {
   ]
 
   function selectedCustomer(customer: Customer) {
-    console.log(customer.name);
-
+    setCustomer(customer)
+    setVisible('form')
   }
 
   function deletedCustomer(customer: Customer) {
-    console.log(customer.name);
+    console.log(customer.name)
 
+  }
+
+  function newCustomer() {
+    setCustomer(Customer.empty())
+    setVisible('form')
   }
 
   function saveCustomer(customer: Customer) {
-    console.log(customer);
+    console.log(customer)
+    setVisible('table')
   }
-
-  const [visible, setVisible] = useState<'table' | 'form'>('table')
 
   return (
     <div className={`
@@ -40,13 +46,13 @@ export default function Home() {
         {visible == 'table' ? (
           <>
             <div className="flex justify-end">
-              <Button color="green" className="mb-4" onClick={() => setVisible('form')}>Novo Cliente</Button>
+              <Button color="green" className="mb-4" onClick={() => newCustomer()}>Novo Cliente</Button>
             </div>
             <Table customers={customers} selectedCustomer={selectedCustomer} deletedCustomer={deletedCustomer}></Table>
 
           </>
         ) : (
-          <Form customer={customers[0]} changeCustomer={saveCustomer} cancel={() => setVisible('table')} />
+          <Form customer={customer} changeCustomer={saveCustomer} cancel={() => setVisible('table')} />
         )}
       </Layout>
     </div>
